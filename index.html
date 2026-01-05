@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compartiendo Psicología - Sesiones de 15min</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0e27;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Fondo animado con partículas */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at top, #1a1f3a 0%, #0a0e27 100%);
+            z-index: 0;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        /* Portada impactante */
+        .cover-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .cover-screen.hidden {
+            opacity: 0;
+            transform: scale(1.1);
+            pointer-events: none;
+        }
+        
+        .cover-content {
+            text-align: center;
+            color: white;
+            animation: fadeInUp 1s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .cover-icon {
+            font-size: 120px;
+            margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .cover-title {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            letter-spacing: -1px;
+        }
+        
+        .cover-subtitle {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 10px;
+            opacity: 0.95;
+        }
+        
+        .cover-author {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 50px;
+            opacity: 0.9;
+        }
+        
+        .cover-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 20px 50px;
+            font-size: 20px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .cover-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.4);
+        }
+        
+        /* Contenedor principal con glassmorphism */
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5), 
+                        inset 0 1px 0 rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header con efecto neón */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .main-title {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+            text-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+        }
+        
+        .author-name {
+            color: rgba(255,255,255,0.9);
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+        }
+        
+        /* Navegación moderna */
+        .nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 40px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 8px;
+        }
+        
+        .nav-btn {
+            flex: 1;
+            padding: 14px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            color: rgba(255,255,255,0.6);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .nav-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .nav-btn:hover:not(.active) {
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Timer futurista */
+        .timer {
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .timer h2 {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        .time-display {
+            font-size: 96px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 30px 0;
+            font-variant-numeric: tabular-nums;
+            filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.5));
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            margin: 30px 0;
+            overflow: hidden;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            width: 0%;
+            transition: width 1s linear;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        /* Botones premium */
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 25px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 8px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            box-shadow: none;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+        }
+        
+        /* Tarjetas de técnicas premium */
+        .technique-card {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .technique-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .technique-card:hover::before {
+            left: 100%;
+        }
+        
+        .technique-card:hover {
+            transform: translateX(10px) scale(1.02);
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+        }
+        
+        .technique-title {
+            font-weight: 700;
+            color: #f093fb;
+            margin-bottom: 12px;
+            font-size: 20px;
+            text-shadow: 0 0 10px rgba(240, 147, 251, 0.3);
+        }
+        
+        .technique-desc {
+            color: rgba(255,255,255,0.8);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        
+        /* Stats cards premium */
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .stat-number {
+            font-size: 48px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 0 0 20px rgba(240, 147, 251, 0.5);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 500;
+        }
+        
+        .session-log {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .session-date {
+            font-weight: 600;
+            color: white;
+            margin-bottom: 5px;
+        }
+        
+        .session-tech {
+            color: #f093fb;
+            font-size: 14px;
+        }
+        
+        .info-box {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(240, 147, 251, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(240, 147, 251, 0.2);
+            text-align: center;
+        }
+        
+        .info-box p {
+            color: rgba(255,255,255,0.8);
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+        
+        .info-box strong {
+            color: white;
+            font-size: 16px;
+        }
+        
+        .copyright {
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .copyright strong {
+            color: #f093fb;
+        }
+        
+        /* Modal moderno */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 50px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 450px;
+            animation: modalSlide 0.5s ease;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+        
+        @keyframes modalSlide {
+            from {
+                transform: translateY(-100px) scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .modal-icon {
+            font-size: 80px;
+            margin-bottom: 25px;
+            animation: bounce 1s ease;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .modal-content h2 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 32px;
+        }
+        
+        .exercise-container {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .exercise-title {
+            color: white;
+            font-size: 28px;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        
+        .breath-counter {
+            font-size: 120px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 40px 0;
+            filter: drop-shadow(0 0 30px rgba(102, 126, 234, 0.6));
+            transition: all 0.3s ease;
+        }
+        
+        .breath-instruction {
+            font-size: 24px;
+            color: rgba(255,255,255,0.9);
+            margin: 20px 0;
+            font-weight: 600;
+        }
+        
+        .counting-display {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        
+        .count-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 3px solid rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.5);
+            transition: all 0.5s ease;
+        }
+        
+        .count-circle.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: #f093fb;
+            color: white;
+            transform: scale(1.3);
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.8);
+        }
+        
+        .desert-scene {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(to bottom, #FFD9A0 0%, #F4A460 50%, #DEB887 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 30px 0;
+        }
+        
+        .dune {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(to top, #DEB887, transparent);
+            border-radius: 50% 50% 0 0;
+        }
+        
+        .sand-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            font-weight: 700;
+            color: rgba(139, 69, 19, 0.6);
+            font-style: italic;
+            transition: all 2s ease;
+        }
+        
+        .sand-text.fade-out {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(1.5);
+            filter: blur(10px);
+        }
+        
+        .wind-effect {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: windBlow 3s ease-in-out;
+        }
+        
+        @keyframes windBlow {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .thought-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 15px;
+            color: white;
+            margin: 20px 0;
+        }
+        
+        .thought-input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .grounding-list {
+            text-align: left;
+            margin: 30px 0;
+        }
+        
+        .grounding-item {
+            background: rgba(255,255,255,0.08);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #f093fb;
+        }
+        
+        .grounding-item h3 {
+            color: #f093fb;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .grounding-item p {
+            color: rgba(255,255,255,0.8);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg" id="particleCanvas"></div>
+    
+    <!-- PORTADA IMPACTANTE -->
+    <div class="cover-screen" id="coverScreen">
+        <div class="cover-content">
+            <div class="cover-icon">🧠✨</div>
+            <h1 class="cover-title">COMPARTIENDO<br>PSICOLOGÍA</h1>
+            <p class="cover-subtitle">Microintervenciones en Salud Mental</p>
+            <p class="cover-author">Silvana García</p>
+            <button class="cover-btn" onclick="enterApp()">
+                Comenzar Experiencia ✨
+            </button>
+        </div>
+    </div>
+    
+    <!-- APLICACIÓN PRINCIPAL -->
+    <div class="container" style="opacity: 0;" id="mainContainer">
+        <div class="header">
+            <h1 class="main-title">COMPARTIENDO PSICOLOGÍA</h1>
+            <p class="author-name">Silvana García</p>
+            <p class="subtitle">Sesiones de 15 minutos para tu bienestar mental</p>
+        </div>
+        
+        <div class="nav">
+            <button class="nav-btn active" onclick="showSection('timer')">⏱️ Sesión</button>
+            <button class="nav-btn" onclick="showSection('techniques')">📚 Técnicas</button>
+            <button class="nav-btn" onclick="showSection('history')">📊 Progreso</button>
+        </div>
+        
+        <!-- SECCIÓN: TEMPORIZADOR -->
+        <div id="timer" class="section active">
+            <div class="timer">
+                <h2>Sesión de Microintervención</h2>
+                <div class="time-display" id="timeDisplay">15:00</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+                <div>
+                    <button class="btn" id="startBtn" onclick="startTimer()">▶️ Iniciar</button>
+                    <button class="btn btn-secondary" id="pauseBtn" onclick="pauseTimer()" style="display:none;">⏸️ Pausar</button>
+                    <button class="btn btn-secondary" onclick="resetTimer()">🔄 Reiniciar</button>
+                </div>
+                <div class="info-box">
+                    <p><strong>Técnica seleccionada:</strong></p>
+                    <p id="currentTechnique" style="color: #f093fb; font-weight: 600; font-size: 18px;">Respiración 4-7-8</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SECCIÓN: TÉCNICAS -->
+        <div id="techniques" class="section">
+            <h2 style="color: white; margin-bottom: 25px; font-size: 28px; font-weight: 700;">Técnicas de Intervención</h2>
+            
+            <!-- Lista de técnicas -->
+            <div id="techniquesList">
+                <div class="technique-card" onclick="openTechnique('breathing478')">
+                    <div class="technique-title">🫁 Respiración 4-7-8</div>
+                </div>
+                
+                <div class="technique-card" onclick="openTechnique('grounding')">
+                    <div class="technique-title">🌍 Anclaje 5-4-3-2-1</div>
+                </div>
+                
+                <div class="technique-card" onclick="openTechnique('countingBreath')">
+                    <div class="technique-title">💨 Contando Respiraciones</div>
+                </div>
+                
+                <div class="technique-card" onclick="openTechnique('mindfulness')">
+                    <div class="technique-title">🧘 Atención Plena</div>
+                </div>
+                
+                <div class="technique-card" onclick="openTechnique('gratitude')">
+                    <div class="technique-title">✍️ Diario de Gratitud</div>
+                </div>
+                
+                <div class="technique-card" onclick="openTechnique('visualization')">
+                    <div class="technique-title">🌅 Visualización Guiada - Palabras en la Arena</div>
+                </div>
+            </div>
+            
+            <!-- Ejercicio Interactivo -->
+            <div id="exerciseView" style="display: none;">
+                <button class="btn btn-secondary" onclick="backToList()" style="margin-bottom: 20px;">
+                    ← Volver a técnicas
+                </button>
+                <div id="exerciseContent"></div>
+            </div>
+        </div>
+        
+        <!-- SECCIÓN: HISTORIAL -->
+        <div id="history" class="section">
+            <h2 style="color: white; margin-bottom: 25px; font-size: 28px; font-weight: 700;">Tu Progreso</h2>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalSessions">0</div>
+                    <div class="stat-label">Sesiones Totales</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalMinutes">0</div>
+                    <div class="stat-label">Minutos Practicados</div>
+                </div>
+            </div>
+            
+            <h3 style="color: rgba(255,255,255,0.9); margin: 35px 0 20px; font-size: 20px;">Últimas Sesiones</h3>
+            <div id="sessionList">
+                <p style="text-align: center; color: rgba(255,255,255,0.6); padding: 50px 20px;">
+                    Aún no hay sesiones registradas.<br>¡Comienza tu primera microintervención!
+                </p>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            © 2026 <strong>Silvana García</strong> - Compartiendo Psicología<br>
+            Contenido protegido - Uso autorizado únicamente
+        </div>
+    </div>
+    
+    <!-- MODAL -->
+    <div class="modal" id="completionModal">
+        <div class="modal-content">
+            <div class="modal-icon">🎉</div>
+            <h2>¡Sesión Completada!</h2>
+            <p>Has terminado tu microintervención de 15 minutos.</p>
+            <button class="btn" onclick="closeModal()">Continuar</button>
+        </div>
+    </div>
+
+    <script>
+        // Generar partículas de fondo
+        function createParticles() {
+            const canvas = document.getElementById('particleCanvas');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 4 + 1;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.background = `rgba(${102 + Math.random() * 150}, ${126 + Math.random() * 130}, ${234 + Math.random() * 20}, ${Math.random() * 0.5 + 0.3})`;
+                particle.style.animation = `float ${Math.random() * 10 + 10}s ease-in-out infinite`;
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                canvas.appendChild(particle);
+            }
+        }
+        
+        function enterApp() {
+            document.getElementById('coverScreen').classList.add('hidden');
+            const container = document.getElementById('mainContainer');
+            setTimeout(() => {
+                container.style.transition = 'opacity 1s ease';
+                container.style.opacity = '1';
+            }, 800);
+        }
+        
+        let timerInterval;
+        let timeLeft = 900;
+        let isRunning = false;
+        let currentTechniqueName = 'Respiración 4-7-8';
+        let sessions = [];
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Técnicas interactivas
+        let currentExercise = null;
+        let breathInterval = null;
+        
+        function openTechnique(techId) {
+            document.getElementById('techniquesList').style.display = 'none';
+            document.getElementById('exerciseView').style.display = 'block';
+            currentExercise = techId;
+            
+            const content = document.getElementById('exerciseContent');
+            
+            switch(techId) {
+                case 'breathing478':
+                    content.innerHTML = `
+                        <div class="exercise-container">
+                            <h2 class="exercise-title">🫁 Respiración 4-7-8</h2>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 18px; margin-bottom: 30px; line-height: 1.8;">
+                                Para lograr la calma debemos hacer algo conocido, y lo más familiar en todos es RESPIRAR. Así que te invito a hacer este ejercicio, las veces que sean necesarias, para volver a tu calma. Toca Iniciar Ejercicio (abajo) y comienza: Inhala por 4 segundos, retén la respiración por 7 segundos y exhala suavemente por 8 segundos.
+                            </p>
+                            <div class="breath-counter" id="breathCounter">4</div>
+                            <div class="breath-instruction" id="breathInstruction">Preparate para comenzar</div>
+                            <button class="btn" onclick="startBreathing478()">Iniciar Ejercicio</button>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'countingBreath':
+                    content.innerHTML = `
+                        <div class="exercise-container">
+                            <h2 class="exercise-title">💨 Contando Respiraciones</h2>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 18px; margin-bottom: 20px; line-height: 1.8;">
+                                Continuamos con lo familiar, la respiración para despejar la mente. Apretá "Comenzar Conteo" (abajo) y comenzá. Contá solo al exhalar. Vamos! Respirá normal, no cambies nada y ahora exhalá 1...2...3...4...5
+                            </p>
+                            <div class="counting-display">
+                                <div class="count-circle" id="count1">1</div>
+                                <div class="count-circle" id="count2">2</div>
+                                <div class="count-circle" id="count3">3</div>
+                                <div class="count-circle" id="count4">4</div>
+                                <div class="count-circle" id="count5">5</div>
+                            </div>
+                            <button class="btn" onclick="startCountingBreath()">Comenzar Conteo</button>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'visualization':
+                    content.innerHTML = `
+                        <div class="exercise-container">
+                            <h2 class="exercise-title">🌅 Palabras en la Arena</h2>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 18px; margin-bottom: 30px; line-height: 1.8;">
+                                Cerrá los ojos. Imagina un desierto enorme, con dunas hasta el horizonte. Notá tus pensamientos: ¿En qué piensas más hoy? ¿Cómo son tus pensamientos? Visualizá que esos pensamientos los escribes en la arena... viene un viento y borra, llevándoselos. Mientras eso sucede, tu dejalos ir. Sigue con el siguiente pensamiento y asi sucesivamente hasta que estés más tranquila. Uno por uno, vas a sentir la mente más clara y en paz. Escribe el pensamiento que tienes y cuando estés preparado, sopla (en el boton Dejar ir)
+                            </p>
+                            <div class="desert-scene" id="desertScene">
+                                <div class="dune"></div>
+                                <div class="sand-text" id="sandText">Tu pensamiento aquí</div>
+                            </div>
+                            <input type="text" class="thought-input" id="thoughtInput" placeholder="Escribe un pensamiento que quieras soltar...">
+                            <button class="btn" onclick="releaseThought()">Dejar Ir 🌬️</button>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'grounding':
+                    content.innerHTML = `
+                        <div class="exercise-container">
+                            <h2 class="exercise-title">🌍 Anclaje 5-4-3-2-1</h2>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 18px; margin-bottom: 30px;">
+                                Identifica elementos de tu entorno para anclarte al presente
+                            </p>
+                            <div class="grounding-list">
+                                <div class="grounding-item">
+                                    <h3>👁️ 5 cosas que VES</h3>
+                                    <p>Observa y nombra 5 objetos que puedas ver a tu alrededor</p>
+                                </div>
+                                <div class="grounding-item">
+                                    <h3>🤚 4 cosas que TOCAS</h3>
+                                    <p>Siente 4 texturas o superficies diferentes</p>
+                                </div>
+                                <div class="grounding-item">
+                                    <h3>👂 3 cosas que OYES</h3>
+                                    <p>Identifica 3 sonidos distintos en tu ambiente</p>
+                                </div>
+                                <div class="grounding-item">
+                                    <h3>👃 2 cosas que HUELES</h3>
+                                    <p>Percibe 2 aromas u olores cercanos</p>
+                                </div>
+                                <div class="grounding-item">
+                                    <h3>👅 1 cosa que SABOREAS</h3>
+                                    <p>Nota un sabor presente en tu boca</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'mindfulness':
+                    content.innerHTML = `
+                        <div class="exercise-container">
+                            <h2 class="exercise-title">🧘 Atención Plena</h2>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 18px; margin-bottom: 30px; line-height: 1.8;">
+                                Elegí un objeto pequeño y cotidiano (cadenita, fruta, caja...).
+                                Debe ser emocionalmente neutro: algo que no te remueva nada por dentro.
+                            </p>
+                            <div class="grounding-list">
+                                <div class="grounding-item">
+                                    <h3>👁️ VISTA</h3>
+                                    <p>Observa sus colores, formas, detalles. ¿Qué texturas visuales tiene?</p>
+                                </div>
+                                <div class="grounding-item">
+                                    <h3>🤚 TACTO</h3>
+                                    <p>Tocalo. ¿Es suave, rugoso, frío, cálido? ¿Qué peso tiene?</p>
+                                </div>
+                                <div class="grounding-item">
+                                    <h3>👂 OÍDO</h3>
+                                    <p>¿Hace algún sonido al moverlo? ¿Qué escuchas al interactuar con él?</p>
+                                </div>
+                                <div class="grounding-item">
+                                    <h3>👃 OLFATO</h3>
+                                    <p>Acércalo. ¿Tiene algún aroma? ¿A qué huele?</p>
+                                </div>
+                                <div class="grounding-item">
+                                    <h3>👅 GUSTO</h3>
+                                    <p>Si es apropiado, pruébalo. Si no, imagina su sabor.</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'gratitude':
+                    content.innerHTML = `
+                        <div class="exercise-container">
+                            <h2 class="exercise-title">✍️ Diario de Gratitud</h2>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 18px; margin-bottom: 30px;">
+                                Escribe 3 cosas por las que estés agradecido hoy
+                            </p>
+                            <div style="text-align: left;">
+                                <div style="margin: 20px 0;">
+                                    <label style="color: #f093fb; font-weight: 600; display: block; margin-bottom: 10px;">1. Primera gratitud:</label>
+                                    <input type="text" class="thought-input" placeholder="Algo por lo que te sientas agradecido...">
+                                </div>
+                                <div style="margin: 20px 0;">
+                                    <label style="color: #f093fb; font-weight: 600; display: block; margin-bottom: 10px;">2. Segunda gratitud:</label>
+                                    <input type="text" class="thought-input" placeholder="Otra cosa que valores hoy...">
+                                </div>
+                                <div style="margin: 20px 0;">
+                                    <label style="color: #f093fb; font-weight: 600; display: block; margin-bottom: 10px;">3. Tercera gratitud:</label>
+                                    <input type="text" class="thought-input" placeholder="Una más que quieras reconocer...">
+                                </div>
+                            </div>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 14px; margin-top: 20px; font-style: italic;">
+                                Toma un momento para sentir la gratitud en tu cuerpo
+                            </p>
+                        </div>
+                    `;
+                    break;
+            }
+        }
+        
+        function backToList() {
+            document.getElementById('techniquesList').style.display = 'block';
+            document.getElementById('exerciseView').style.display = 'none';
+            if (breathInterval) {
+                clearInterval(breathInterval);
+                breathInterval = null;
+            }
+        }
+        
+        // Ejercicio Respiración 4-7-8
+        function startBreathing478() {
+            const counter = document.getElementById('breathCounter');
+            const instruction = document.getElementById('breathInstruction');
+            let phase = 0; // 0: inhalar, 1: mantener, 2: exhalar
+            let count;
+            
+            const phases = [
+                { duration: 4, text: 'Inhala', start: 4 },
+                { duration: 7, text: 'Mantén', start: 7 },
+                { duration: 8, text: 'Exhala', start: 8 }
+            ];
+            
+            function runCycle() {
+                count = phases[phase].start;
+                instruction.textContent = phases[phase].text;
+                counter.textContent = count;
+                
+                const phaseInterval = setInterval(() => {
+                    count--;
+                    counter.textContent = count;
+                    
+                    if (count <= 0) {
+                        clearInterval(phaseInterval);
+                        phase = (phase + 1) % 3;
+                        if (phase === 0) {
+                            setTimeout(runCycle, 1000);
+                        } else {
+                            runCycle();
+                        }
+                    }
+                }, 1000);
+            }
+            
+            runCycle();
+        }
+        
+        // Ejercicio Contando Respiraciones
+        function startCountingBreath() {
+            let currentCount = 1;
+            
+            function highlightCount() {
+                // Resetear todos
+                for (let i = 1; i <= 5; i++) {
+                    document.getElementById('count' + i).classList.remove('active');
+                }
+                
+                // Activar actual
+                document.getElementById('count' + currentCount).classList.add('active');
+                
+                // Siguiente
+                setTimeout(() => {
+                    currentCount++;
+                    if (currentCount > 5) {
+                        currentCount = 1;
+                    }
+                    highlightCount();
+                }, 4000); // Cada 4 segundos (tiempo promedio de respiración)
+            }
+            
+            highlightCount();
+        }
+        
+        // Ejercicio Visualización
+        function releaseThought() {
+            const input = document.getElementById('thoughtInput');
+            const sandText = document.getElementById('sandText');
+            const desert = document.getElementById('desertScene');
+            
+            if (input.value.trim()) {
+                // Mostrar pensamiento en la arena
+                sandText.textContent = input.value;
+                sandText.classList.remove('fade-out');
+                
+                // Después de 2 segundos, crear viento y borrar
+                setTimeout(() => {
+                    // Crear efecto de viento
+                    const wind = document.createElement('div');
+                    wind.className = 'wind-effect';
+                    desert.appendChild(wind);
+                    
+                    // Desvanecer texto
+                    sandText.classList.add('fade-out');
+                    
+                    // Limpiar después de la animación
+                    setTimeout(() => {
+                        desert.removeChild(wind);
+                        input.value = '';
+                        sandText.textContent = 'Tu pensamiento aquí';
+                        sandText.classList.remove('fade-out');
+                    }, 3000);
+                }, 2000);
+            }
+        }
+        
+        function selectTechnique(name) {
+            currentTechniqueName = name;
+            document.getElementById('currentTechnique').textContent = name;
+            showSection('timer');
+            document.querySelectorAll('.nav-btn')[0].classList.add('active');
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function updateDisplay() {
+            document.getElementById('timeDisplay').textContent = formatTime(timeLeft);
+            const progress = ((900 - timeLeft) / 900) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('pauseBtn').style.display = 'inline-block';
+                
+                timerInterval = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateDisplay();
+                    } else {
+                        completeSession();
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            isRunning = false;
+            clearInterval(timerInterval);
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('pauseBtn').style.display = 'none';
+        }
+
+        function resetTimer() {
+            isRunning = false;
+            clearInterval(timerInterval);
+            timeLeft = 900;
+            updateDisplay();
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('pauseBtn').style.display = 'none';
+        }
+
+        function completeSession() {
+            pauseTimer();
+            resetTimer();
+            
+            sessions.unshift({
+                date: new Date().toISOString(),
+                technique: currentTechniqueName,
+                duration: 15
+            });
+            updateHistory();
+            
+            document.getElementById('completionModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('completionModal').classList.remove('active');
+        }
+
+        function updateHistory() {
+            const totalSessions = sessions.length;
+            const totalMinutes = totalSessions * 15;
+            
+            document.getElementById('totalSessions').textContent = totalSessions;
+            document.getElementById('totalMinutes').textContent = totalMinutes;
+            
+            const listEl = document.getElementById('sessionList');
+            
+            if (sessions.length === 0) {
+                listEl.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6); padding: 50px 20px;">Aún no hay sesiones registradas.<br>¡Comienza tu primera microintervención!</p>';
+                return;
+            }
+            
+            listEl.innerHTML = sessions.slice(0, 10).map(session => {
+                const date = new Date(session.date);
+                const dateStr = date.toLocaleDateString('es', { 
+                    day: 'numeric', 
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                return `
+                    <div class="session-log">
+                        <div class="session-info">
+                            <div class="session-date">${dateStr}</div>
+                            <div class="session-tech">${session.technique}</div>
+                        </div>
+                        <div style="font-size: 28px;">✅</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Inicializar
+        createParticles();
+        updateDisplay();
+    </script>
+</body>
+</html>
